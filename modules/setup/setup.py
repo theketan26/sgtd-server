@@ -35,17 +35,14 @@ class App:
         except HttpError as err:
             print(err)
 
-    def get_events(self, date):
+    def get_events(self, from_date, to_data = 1):
         try:
-            # Convert the input date to datetime object
-            start_datetime = datetime.strptime(date, '%Y-%m-%d')
-            end_datetime = start_datetime + timedelta(days = 1)  # Events for the entire day
+            start_datetime = datetime.strptime(from_date, '%Y-%m-%d')
+            end_datetime = start_datetime + timedelta(days = to_data)
 
-            # Format datetime objects to RFC3339 format required by Google Calendar API
-            start_time = start_datetime.strftime('%Y-%m-%dT%H:%M:%S%z')
-            end_time = end_datetime.strftime('%Y-%m-%dT%H:%M:%S%z')
+            start_time = str(start_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
+            end_time = str(end_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
 
-            # Call the Google Calendar API to get events for the specified date
             events_result = self.service.events().list(
                 calendarId = 'primary',
                 timeMin = start_time,
@@ -60,3 +57,43 @@ class App:
         except HttpError as err:
             print(f"An error occurred: {err}")
             return None
+
+
+    # def add_event(self, date, summary, description = None, location = None):
+    #     try:
+    #         # Convert the input date to datetime object
+    #         event_date = datetime.strptime(date, '%Y-%m-%d')
+    #
+    #         # Format datetime object to RFC3339 format required by Google Calendar API
+    #         event_time = event_date.isoformat() + 'Z'
+    #
+    #         # Create event body
+    #         event = {
+    #             'summary': summary,
+    #             'description': description,
+    #             'location': location,
+    #             'start': {
+    #                 'dateTime': event_time,
+    #                 'timeZone': 'UTC',
+    #             },
+    #             'end': {
+    #                 'dateTime': event_time,
+    #                 'timeZone': 'UTC',
+    #             },
+    #         }
+    #
+    #         # Call the Google Calendar API to add the event
+    #         created_event = self.service.events().insert(
+    #             calendarId='primary',
+    #             body=event
+    #         ).execute()
+    #
+    #         print(f"Event '{summary}' added on {date}.")
+    #         return created_event
+    #
+    #     except HttpError as err:
+    #         print(f"Google Calendar API Error: {err}")
+    #         return None
+    #     except Exception as e:
+    #         print(f"An unexpected error occurred: {e}")
+    #         return None

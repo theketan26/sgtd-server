@@ -3,16 +3,12 @@ import json
 
 from fastapi import FastAPI
 from fastapi import FastAPI, Depends, HTTPException, status, Request, Cookie
-from fastapi import FastAPI, Depends, HTTPException, status, Request, Response
-from fastapi_sessions.frontends.implementations import SessionManager, SessionCookie, SessionSettings
 
 from modules.setup.setup import App
 from modules.db.db import Db
 
 
 app = FastAPI()
-with open('consts.json', 'r') as file:
-    secret_key = json.load(file)['secret_key']
 
 end = App()
 db = Db()

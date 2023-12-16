@@ -3,10 +3,12 @@ import datetime as dt
 from fastapi import FastAPI
 
 from modules.setup.setup import App
+from modules.db.db import Db
 
 
 app = FastAPI()
 end = App()
+db = Db()
 
 
 @app.get('/')

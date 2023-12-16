@@ -19,14 +19,19 @@ async def root():
 @app.get('/get-event/{date}')
 async def get_event(date):
     report = end.get_events(date)
-    return {
-        'message': report
-    }
+    return report
 
 
 @app.get('/get-events/{date}/{to}')
-async def get_event(date, to):
+async def get_events(date, to):
     report = end.get_events(date, int(to))
-    return {
-        'message': report
-    }
+    return report
+
+
+@app.post('/add-event/{date}')
+async def add_event(date, event_data: dict):
+    report = end.add_event(date,
+                           summary = event_data['summary'],
+                           description = event_data['description'],
+                           location = event_data['location'])
+    return report

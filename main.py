@@ -51,6 +51,12 @@ async def update_event(date, old_summary, summary, description, location):
     return report
 
 
+@app.post('/add-user/details')
+async def add_event(data: dict):
+    report = db.add_user_details(data)
+    return report
+
+
 @app.post('/add-user')
 async def add_event(data: dict):
     report = db.add_user(data)

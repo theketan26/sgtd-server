@@ -9,6 +9,7 @@ class Db:
         self.client = MongoClient(uri, server_api = ServerApi('1'))
 
         try:
+            print("Starting to ping!")
             self.client.admin.command('ping')
             print("Pinged your deployment. You successfully connected to MongoDB!")
         except Exception as e:
@@ -34,9 +35,13 @@ class Db:
 
         result = self.details_collection.insert_one(user_data)
 
-        if result.acknowledged:
+        try:
             report['status'] = True
-            report['message'] = result.inserted_id
+            report['message'] = str(result.inserted_id)
+            print(f"User added with ID: {result.inserted_id}")
+        except Exception as e:
+            report['status'] = False
+            report['message'] = f"Error occurred as {e}"
+            print(f"Error occurred as {e}")
 
-        print(f"User added with ID: {result.inserted_id}")
         return report

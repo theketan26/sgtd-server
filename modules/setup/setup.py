@@ -118,14 +118,6 @@ class App:
             event_date = datetime.strptime(date, '%Y-%m-%d')
             event_time = event_date.isoformat() + 'Z'
 
-            events_result = self.service.events().list(
-                calendarId = 'primary',
-                timeMin = event_time,
-                timeMax = event_time,
-                singleEvents = True,
-                orderBy = 'startTime'
-            ).execute()
-
             events = self.get_events(date)['message']
 
             event_to_delete = next((event for event in events if event['summary'] == event_summary), None)
@@ -162,3 +154,67 @@ class App:
         #         'status': False,
         #         'message': f"An unexpected error occurred: {e}"
         #     }
+
+
+    def update_event(self, date, event_summary, new_summary, new_description, new_location):
+        try:
+            event_date = datetime.strptime(date, '%Y-%m-%d')
+
+            start_time = event_date.isoformat() + 'Z'
+            end_time = (event_date).isoformat() + 'Z'
+
+            events = self.get_events(date)['message']
+
+            event_to_update = next((event for event in events if event['summary'] == event_summary), None)
+
+            if event_to_update:
+                event_id = event_to_update['id']
+
+                updated_event = {
+                    'summary': new_summary if new_summary else event_to_update['summary'],
+                    'description': new_description if new_description else event_to_update.get('description', ''),
+                    'location': new_location if new_location else event_to_update.get('location', ''),
+                    'start': {
+                        'dateTime': start_time,
+                        'timeZone': 'UTC'
+                    },
+                    'end': {
+                        'dateTime': end_time,
+                        'timeZone': 'UTC'
+                    },
+                    'reminders': {
+                    'useDefault': False,
+                    'overrides': [],
+                },
+                }
+
+                updated_event = self.service.events().update(
+                    calendarId = 'primary',
+                    eventId = event_id,
+                    body = updated_event
+                ).execute()
+
+                print(f"Event '{event_summary}' updated on {date}.")
+                return {
+                    'status': True,
+                    'message': updated_event
+                }
+            else:
+                print(f"No event with summary '{event_summary}' found on {date}.")
+                return {
+                    'status': False,
+                    'message': f"No event with summary '{event_summary}' found on {date}."
+                }
+
+        except HttpError as err:
+            print(f"Google Calendar API Error: {err}")
+            return {
+                'status': False,
+                'message': f"Google Calendar API Error: {err}"
+            }
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return {
+                'status': False,
+                'message': f"An unexpected error occurred: {e}"
+            }

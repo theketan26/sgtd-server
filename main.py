@@ -45,7 +45,13 @@ async def delete_event(date, summary):
     return report
 
 
-@app.patch('/delete-event/{date}/{old_summary}/{summary}/{description}/{location}')
+@app.patch('/update-event/{date}/{old_summary}/{summary}/{description}/{location}')
 async def update_event(date, old_summary, summary, description, location):
     report = end.update_event(date, old_summary, summary, description, location)
+    return report
+
+
+@app.post('/add-user')
+async def add_event(data: dict):
+    report = db.add_user(data)
     return report

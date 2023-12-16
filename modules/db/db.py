@@ -16,3 +16,27 @@ class Db:
 
         self.db = self.client.user
         self.details_collection = self.db.details
+
+
+    def add_user(self, user_data):
+        report = {
+            'status': False,
+            'message': None
+        }
+
+        if not 6000000000 < user_data['mobile'] < 9999999999:
+            report['message'] = 'Mobile number invalid'
+            return report
+
+        if not 0 < user_data['type'] < 5:
+            report['message'] = 'Type invalid'
+            return report
+
+        result = self.details_collection.insert_one(user_data)
+
+        if result.acknowledged:
+            report['status'] = True
+            report['message'] = result.inserted_id
+
+        print(f"User added with ID: {result.inserted_id}")
+        return report

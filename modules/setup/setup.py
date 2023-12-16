@@ -111,3 +111,54 @@ class App:
                 'status': False,
                 'message': f"An unexpected error occurred: {e}"
             }
+
+
+    def delete_event(self, date, event_summary):
+        try:
+            event_date = datetime.strptime(date, '%Y-%m-%d')
+            event_time = event_date.isoformat() + 'Z'
+
+            events_result = self.service.events().list(
+                calendarId = 'primary',
+                timeMin = event_time,
+                timeMax = event_time,
+                singleEvents = True,
+                orderBy = 'startTime'
+            ).execute()
+
+            events = self.get_events(date)['message']
+
+            event_to_delete = next((event for event in events if event['summary'] == event_summary), None)
+
+            if event_to_delete:
+                event_id = event_to_delete['id']
+
+                self.service.events().delete(
+                    calendarId = 'primary',
+                    eventId = event_id
+                ).execute()
+
+                print(f"Event '{event_summary}' deleted on {date}.")
+                return {
+                    'status': True,
+                    'message': f"Event '{event_summary}' deleted on {date}."
+                }
+            else:
+                print(f"No event with summary '{event_summary}' found on {date}.")
+                return {
+                    'status': False,
+                    'message': f"No event with summary '{event_summary}' found on {date}."
+                }
+
+        except HttpError as err:
+            print(f"Google Calendar API Error: {err}")
+            return {
+                'status': False,
+                'message': f"Google Calendar API Error: {err}"
+            }
+        # except Exception as e:
+        #     print(f"An unexpected error occurred: {e}")
+        #     return {
+        #         'status': False,
+        #         'message': f"An unexpected error occurred: {e}"
+        #     }

@@ -35,3 +35,9 @@ async def add_event(date, event_data: dict):
                            description = event_data['description'],
                            location = event_data['location'])
     return report
+
+
+@app.delete('/delete-event/{date}/{summary}')
+async def delete_event(date, summary):
+    report = end.delete_event(date, summary)
+    return report

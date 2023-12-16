@@ -47,6 +47,13 @@ class Db:
             report['status'] = True
             report['message'] = str(result.inserted_id)
             print(f"User added with ID: {result.inserted_id}")
+
+            self.add_user_details({
+                'number': user_data['number'],
+                'name': None,
+                'email': None,
+                'position': 4
+            })
         except Exception as e:
             report['status'] = False
             report['message'] = f"Error occurred as {e}"
@@ -87,3 +94,35 @@ class Db:
             print(f"Error occurred as {e}")
 
         return report
+
+
+    def delete_user(self, number):
+        try:
+            result = self.creds_collection.delete_one({"number": int(number)})
+            result = self.details_collection.delete_one({"number": int(number)})
+
+            if result.deleted_count > 0:
+                print(f"Document with number {number} deleted successfully.")
+                return True
+            else:
+                print(f"No document found with number {number}.")
+                return False
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False
+
+    def update_user(self, user_data):
+        try:
+            result = self.details_collection.update_one({"number": user_data['number']}, {"$set": user_data})
+
+            if result.modified_count > 0:
+                print(f"User data for user with number {user_data['number']} updated successfully.")
+                return True
+            else:
+                print(f"No user found with number {user_data}. Nothing to update.")
+                return False
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False

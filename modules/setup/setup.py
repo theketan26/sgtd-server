@@ -1,6 +1,7 @@
 from os import path
 import datetime as dt
 from datetime import datetime, timedelta
+import json
 
 
 from google.auth.transport.requests import Request
@@ -34,6 +35,7 @@ class App:
 
         except HttpError as err:
             print(err)
+
 
     def get_events(self, from_date, to_data = 1):
         try:

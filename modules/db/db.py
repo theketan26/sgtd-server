@@ -112,6 +112,7 @@ class Db:
             print(f"An unexpected error occurred: {e}")
             return False
 
+
     def update_user(self, user_data):
         try:
             result = self.details_collection.update_one({"number": user_data['number']}, {"$set": user_data})

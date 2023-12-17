@@ -1,29 +1,54 @@
-from fastapi import Depends, HTTPException, status, APIRouter
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from pydantic import BaseModel
+from typing import Optional
 import json
-import requests
-import config
 
 
 with open('consts.json', 'r') as file:
     secret = json.load(file)
     SECRET_KEY = secret['secret_key']
-    ALGORITHM = secret['algorithm']
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 100000
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
 
-router = APIRouter()
-
-def create_jwt_token(data: dict):
+def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
-    to_encode.update({"exp": 100000})
+    expire = datetime.now() + expires_delta
+    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encoded_jwt
 
 
-def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl = "token"))):
+async def login_for_access_token(form_data):
+    from modules.db.routes import get_user
+    result = await get_user(int(form_data.username))
+    if not result:
+        return {
+            'status': False,
+            'message': 'Incorrect username'
+        }
+
+    result['_id'] = str(result['_id'])
+    if result['password'] != form_data.password:
+        return {
+            'status': False,
+            'message': 'Incorrect password'
+        }
+
+    access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data = {"sub": form_data.username},
+                                       expires_delta = access_token_expires)
+    return {
+        'status': True,
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
         detail = "Could not validate credentials",
@@ -34,16 +59,3 @@ def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl = "token
         return payload
     except JWTError:
         raise credentials_exception
-
-
-@router.post("/token")
-async def login_for_access_token(data: dict):
-    user = {"sub": data["username"]}
-    access_token = create_jwt_token(data = user)
-    return {"access_token": access_token, "token_type": "bearer"}
-
-
-
-@router.get("/protected")
-async def protected_route(current_user: dict = Depends(get_current_user)):
-    return {"message": "This is a protected route", "user": current_user}

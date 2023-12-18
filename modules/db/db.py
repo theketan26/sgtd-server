@@ -133,3 +133,22 @@ class Db:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
             return False
+
+
+    def update_password(self, user_data):
+        try:
+            result = self.creds_collection.update_one({"number": user_data.number}, {"$set": {
+                'number': user_data.number,
+                'password': user_data.password
+            }})
+
+            if result.modified_count > 0:
+                print(f"User data for user with number {user_data.number} updated successfully.")
+                return True
+            else:
+                print(f"No user found with number {user_data.number}. Nothing to update.")
+                return False
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False

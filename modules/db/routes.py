@@ -45,4 +45,10 @@ async def update_user(data: UserDetails, current_user: dict = Depends(get_curren
     return report
 
 
+@db_router.post('/update-user-password')
+async def update_user(data: UserCreds, current_user: dict = Depends(get_current_user)):
+    report = db.update_password(data)
+    return report
+
+
 

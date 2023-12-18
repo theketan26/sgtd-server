@@ -2,6 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 
+
 uri = "mongodb+srv://theketan26:ks123456@start.fbvwsga.mongodb.net/?retryWrites=true&w=majority"
 
 
@@ -47,13 +48,13 @@ class Db:
             report['status'] = True
             report['message'] = str(result.inserted_id)
             print(f"User added with ID: {result.inserted_id}")
-
-            self.add_user_details({
-                'number': user_data['number'],
+            user_data.pop('password')
+            user_data.update({
                 'name': None,
                 'email': None,
-                'position': 4
+                'position': 1
             })
+            self.add_user_details(user_data)
         except Exception as e:
             report['status'] = False
             report['message'] = f"Error occurred as {e}"
@@ -115,13 +116,18 @@ class Db:
 
     def update_user(self, user_data):
         try:
-            result = self.details_collection.update_one({"number": user_data['number']}, {"$set": user_data})
+            result = self.details_collection.update_one({"number": user_data.number}, {"$set": {
+                'number': user_data.number,
+                'name': user_data.name,
+                'email': user_data.email,
+                'position': user_data.position
+            }})
 
             if result.modified_count > 0:
-                print(f"User data for user with number {user_data['number']} updated successfully.")
+                print(f"User data for user with number {user_data.number} updated successfully.")
                 return True
             else:
-                print(f"No user found with number {user_data}. Nothing to update.")
+                print(f"No user found with number {user_data.number}. Nothing to update.")
                 return False
 
         except Exception as e:

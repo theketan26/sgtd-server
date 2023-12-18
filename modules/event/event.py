@@ -37,6 +37,74 @@ class Event:
             print(err)
 
 
+    def get_event(self, from_date):
+        try:
+            start_datetime = datetime.strptime(from_date, '%Y-%m-%d')
+            end_datetime = start_datetime + timedelta(days = 1)
+
+            start_time = str(start_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
+            end_time = str(end_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
+
+            events_result = self.service.events().list(
+                calendarId = 'primary',
+                timeMin = start_time,
+                timeMax = end_time,
+                singleEvents = True,
+                orderBy = 'startTime'
+            ).execute()
+
+            events = events_result.get('items', [])
+
+            return {
+                'status': True,
+                'message': events
+            }
+
+        except HttpError as err:
+            print(f"An error occurred: {err}")
+            return {
+                'status': False,
+                'message': f"An error occurred: {err}"
+            }
+
+
+    def get_event_description(self, from_date):
+        try:
+            start_datetime = datetime.strptime(from_date, '%Y-%m-%d')
+            end_datetime = start_datetime + timedelta(days = 1)
+
+            start_time = str(start_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
+            end_time = str(end_datetime.strftime('%Y-%m-%d')) + 'T00:00:00-00:00'
+
+            events_result = self.service.events().list(
+                calendarId = 'primary',
+                timeMin = start_time,
+                timeMax = end_time,
+                singleEvents = True,
+                orderBy = 'startTime'
+            ).execute()
+
+            events = events_result.get('items', [])
+            new_events = []
+            for event in events:
+                new_events.append({
+                    'summary': event['summary'],
+                    'description': json.loads(event['description'])
+                })
+
+            return {
+                'status': True,
+                'message': new_events
+            }
+
+        except HttpError as err:
+            print(f"An error occurred: {err}")
+            return {
+                'status': False,
+                'message': f"An error occurred: {err}"
+            }
+
+
     def get_events(self, from_date, to_data = 1):
         try:
             start_datetime = datetime.strptime(from_date, '%Y-%m-%d')
@@ -54,9 +122,16 @@ class Event:
             ).execute()
 
             events = events_result.get('items', [])
+            new_events = []
+            for event in events:
+                new_events.append({
+                    'summary': event['summary'],
+                    'description': json.loads(event['description'])
+                })
+
             return {
                 'status': True,
-                'message': events
+                'message': new_events
             }
 
         except HttpError as err:
@@ -67,7 +142,7 @@ class Event:
             }
 
 
-    def add_event(self, date, summary, description, location):
+    def add_event(self, date, summary, description, day, location):
         try:
             event_date = datetime.strptime(date, '%Y-%m-%d')
             event_time = event_date.isoformat() + 'Z'
@@ -96,9 +171,15 @@ class Event:
             ).execute()
 
             print(f"Event '{summary}' added on {date}.")
+            if day > 1:
+                self.add_event(date = str(event_date + timedelta(days = 1)).split()[0],
+                               summary = summary,
+                               description = description,
+                               day = day - 1,
+                               location = location)
             return {
                 'status': True,
-                'message': created_event
+                'message': summary
             }
 
         except HttpError as err:
@@ -120,11 +201,12 @@ class Event:
             event_date = datetime.strptime(date, '%Y-%m-%d')
             event_time = event_date.isoformat() + 'Z'
 
-            events = self.get_events(date)['message']
+            events = self.get_event(date)['message']
 
             event_to_delete = next((event for event in events if event['summary'] == event_summary), None)
 
             if event_to_delete:
+                print(event_to_delete)
                 event_id = event_to_delete['id']
 
                 self.service.events().delete(
@@ -150,12 +232,12 @@ class Event:
                 'status': False,
                 'message': f"Google Calendar API Error: {err}"
             }
-        # except Exception as e:
-        #     print(f"An unexpected error occurred: {e}")
-        #     return {
-        #         'status': False,
-        #         'message': f"An unexpected error occurred: {e}"
-        #     }
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return {
+                'status': False,
+                'message': f"An unexpected error occurred: {e}"
+            }
 
 
     def update_event(self, date, event_summary, new_summary, new_description, new_location):
@@ -165,7 +247,7 @@ class Event:
             start_time = event_date.isoformat() + 'Z'
             end_time = (event_date).isoformat() + 'Z'
 
-            events = self.get_events(date)['message']
+            events = self.get_event(date)['message']
 
             event_to_update = next((event for event in events if event['summary'] == event_summary), None)
 
@@ -199,7 +281,7 @@ class Event:
                 print(f"Event '{event_summary}' updated on {date}.")
                 return {
                     'status': True,
-                    'message': updated_event
+                    'message': 'Successful update'
                 }
             else:
                 print(f"No event with summary '{event_summary}' found on {date}.")

@@ -1,6 +1,8 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
+from cryptography.fernet import Fernet
+import json
 
 
 uri = "mongodb+srv://theketan26:ks123456@start.fbvwsga.mongodb.net/?retryWrites=true&w=majority"
@@ -42,6 +44,11 @@ class Db:
             report['message'] = 'User already exist'
             return report
 
+        with open('consts.json', 'r') as file:
+            crypto_key = json.load(file)['crypto_key']
+
+        fernet = Fernet(crypto_key)
+        user_data['password'] = fernet.encrypt(user_data['password'])
         result = self.creds_collection.insert_one(user_data)
 
         try:

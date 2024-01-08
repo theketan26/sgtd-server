@@ -4,6 +4,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional
 import json
+from cryptography.fernet import Fernet
 
 
 with open('consts.json', 'r') as file:
@@ -30,6 +31,11 @@ async def login_for_access_token(form_data):
             'status': False,
             'message': 'Incorrect username'
         }
+
+    with open('consts.json', 'r') as file:
+        crypto_key = json.load(file)['crypto_key']
+
+    fernet = Fernet(crypto_key)
 
     result['_id'] = str(result['_id'])
     if result['password'] != form_data.password:

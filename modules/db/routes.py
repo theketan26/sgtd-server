@@ -20,9 +20,11 @@ class UserDetails(BaseModel):
     email: str
     position: int
 
+
 class UserCreds(BaseModel):
     number: int
     password: str
+
 
 @db_router.post('/add-user')
 async def add_user(data: UserCreds, current_user: dict = Depends(get_current_user)):

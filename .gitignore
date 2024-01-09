@@ -1,7 +1,7 @@
 creds.json
 token.json
-front
 consts.json
+front/node_modules
 
 
 # Byte-compiled / optimized / DLL files

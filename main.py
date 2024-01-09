@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import json
 from fastapi import FastAPI, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
 
 from modules.event.routes import event_router
 from modules.db.routes import db_router

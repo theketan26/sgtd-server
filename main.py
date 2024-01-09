@@ -11,6 +11,13 @@ from modules.auth.auth import login_for_access_token
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(db_router)
 app.include_router(event_router)
 

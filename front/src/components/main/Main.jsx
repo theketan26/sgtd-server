@@ -15,7 +15,7 @@ export default function () {
 
     const handleChange = async () => {
         setIsLoading(true);
-        let uri = `https://miniature-winner-rjvw7r949635rjg-8000.app.github.dev/get-events/${date.getFullYear()}-${(date.getMonth() + 1) < 10 ? `0${ date.getMonth() + 1 }` : date.getMonth() + 1}-${date.getDate()}/1`;
+        let uri = `https://sgtd.onrender.com/get-events/${date.getFullYear()}-${(date.getMonth() + 1) < 10 ? `0${ date.getMonth() + 1 }` : date.getMonth() + 1}-${date.getDate()}/1`;
         await axios({
             method: 'get',
             url: uri,

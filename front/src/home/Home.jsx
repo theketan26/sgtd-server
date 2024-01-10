@@ -1,14 +1,14 @@
 import * as React from "react";
 import Header from "../components/header/Header";
-import Calender from "../components/calender/Calender";
+import Main from "../components/main/Main";
 
 
 function Home(props) {
 	return (
-		<>
+		<div>
 			<Header />
-			<Calender />
-		</>
+			<Main />
+		</div>
 	);
 }
 

@@ -1,6 +1,9 @@
 ./creds.json
 ./token.json
 ./consts.json
+creds.json
+token.json
+consts.json
 front/node_modules
 
 

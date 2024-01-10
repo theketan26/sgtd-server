@@ -11,7 +11,8 @@ from modules.db.routes import db_router
 from modules.auth.auth import login_for_access_token
 
 
-app = FastAPI()
+# app = FastAPI()
+app = FastAPI(docs_path = None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -26,8 +26,9 @@ export default function (props) {
                 :
                 <div>
                     { isBook ? 
-                        <div className = "bg-rose-300">
-                            Booked
+                        <div className = "flex flex-col align-center">
+                            <div className = "bg-rose-300 text-center">Booked</div>
+                            <button className = "mt-5 px-3 py-1 border-4">Check</button>
                         </div>
                         :
                         <div className = "bg-green-300">

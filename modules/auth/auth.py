@@ -38,10 +38,12 @@ async def login_for_access_token(form_data):
     fernet = Fernet(crypto_key)
 
     result['_id'] = str(result['_id'])
+    result['password'] = fernet.decrypt(result['password'])
+    result['password'] = result['password'].decode('utf-8')
     if result['password'] != form_data.password:
         return {
             'status': False,
-            'message': 'Incorrect password'
+            'message': f'Incorrect password'
         }
 
     access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)

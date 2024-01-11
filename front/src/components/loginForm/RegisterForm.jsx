@@ -68,6 +68,28 @@ export default function() {
             data = res.data;
         });
 
+        if (!data.status) {
+            setNote(data.message);
+            return;
+        }
+        
+        uri = `https://sgtd.onrender.com/update-user`;
+
+        await axios({
+            method: 'post',
+            url: uri,
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            data: {
+                'number': number,
+                'name': name,
+                'email': email,
+                'position': 0
+            }
+        }).then(async (res) => {
+            data = res.data;
+        });
+
         console.log(data);
     };
 

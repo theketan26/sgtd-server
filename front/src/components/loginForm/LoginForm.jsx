@@ -35,7 +35,8 @@ export default function() {
         e.preventDefault();
         if (!(checkNumber() && checkPassword())) return
 
-        let uri = `https://sgtd.onrender.com/login`;
+        // let uri = `https://sgtd.onrender.com/login`;
+        let uri = `http://127.0.0.1:8000/login`;
         let formData = new FormData();
         formData.append('username', number);
         formData.append('password', password);

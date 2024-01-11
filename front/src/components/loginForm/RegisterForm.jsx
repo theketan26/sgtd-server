@@ -54,8 +54,6 @@ export default function() {
 
         let uri = `https://sgtd.onrender.com/add-user`;
 
-        console.log(number, password);
-
         let data;
         await axios({
             method: 'post',

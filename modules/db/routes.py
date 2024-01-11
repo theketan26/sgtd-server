@@ -42,7 +42,7 @@ async def delete_user(number: int, current_user: dict = Depends(get_current_user
 
 
 @db_router.post('/update-user')
-async def update_user(data: UserDetails, current_user: dict = Depends(get_current_user)):
+async def update_user(data: UserDetails):
     report = db.update_user(data)
     return report
 

@@ -77,7 +77,7 @@ export default function() {
                 </div>
                 <div className = "mt-2 flex justify-between">
                     <label for = 'password'>Password</label>
-                    <input type="text" name="password" placeholder = "Enter your password..." 
+                    <input type = "password" name="password" placeholder = "Enter your password..." 
                         value = { password } onChange = { (e) => setPassword(e.target.value) }
                         className = "ms-5 border-2 border-stone-600 px-2 py-1 rounded-md" 
                     />

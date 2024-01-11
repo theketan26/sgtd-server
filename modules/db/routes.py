@@ -27,7 +27,7 @@ class UserCreds(BaseModel):
 
 
 @db_router.post('/add-user')
-async def add_user(data: UserCreds, current_user: dict = Depends(get_current_user)):
+async def add_user(data: UserCreds):
     report = db.add_user({
         'number': data.number,
         'password': data.password

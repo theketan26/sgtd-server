@@ -7,6 +7,8 @@ export default function() {
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
     const [cPassword, setCPassword] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
 
 
     const checkNumber = () => {
@@ -34,16 +36,25 @@ export default function() {
     }
 
 
+    const checkName = () => {
+        if (name.length > 2) {
+            return true;
+        } else {
+            setNote('Name not valid!');
+            return false;
+        }
+    }
+
+
     const handleSubmit = async (e) => {
         setNote('Loading');
 
         e.preventDefault();
-        if (!(checkNumber() && checkPassword())) return
+        if (!(checkNumber() && checkPassword() && checkName())) return
 
-        let uri = `https://sgtd.onrender.com/login`;
-        let formData = new FormData();
-        formData.append('username', number);
-        formData.append('password', password);
+        let uri = `https://sgtd.onrender.com/add-user`;
+
+        console.log(number, password);
 
         let data;
         await axios({
@@ -51,19 +62,15 @@ export default function() {
             url: uri,
             'accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
-            data: formData
+            data: {
+                'number': number,
+                'password': password
+            }
         }).then(async (res) => {
             data = res.data;
         });
 
         console.log(data);
-        if (data.status) {
-            localStorage.setItem('accessToken', data.access_token);
-            localStorage.setItem('position', 0);
-            setNote('');
-        } else {
-            setNote(data.message);
-        }
     };
 
 
@@ -82,15 +89,29 @@ export default function() {
                 </div>
                 <div className = "mt-2 flex justify-between">
                     <label for = 'password'>Password</label>
-                    <input type="text" name="password" placeholder = "Enter your password..." 
+                    <input type="password" name="password" placeholder = "Enter your password..." 
                         value = { password } onChange = { (e) => setPassword(e.target.value) }
                         className = "ms-5 border-2 border-stone-600 px-2 py-1 rounded-md" 
                     />
                 </div>
                 <div className = "mt-2 flex justify-between">
                     <label for = 'c_password'>Confirm Password</label>
-                    <input type="text" name="c_password" placeholder = "Enter your password..." 
+                    <input type="password" name="c_password" placeholder = "Enter your password..." 
                         value = { cPassword } onChange = { (e) => setCPassword(e.target.value) }
+                        className = "ms-5 border-2 border-stone-600 px-2 py-1 rounded-md" 
+                    />
+                </div>
+                <div className = "mt-2 flex justify-between">
+                    <label for = 'name'>Name</label>
+                    <input type="text" name="name" placeholder = "Enter your name..." 
+                        value = { name } onChange = { (e) => setName(e.target.value) }
+                        className = "ms-5 border-2 border-stone-600 px-2 py-1 rounded-md" 
+                    />
+                </div>
+                <div className = "mt-2 flex justify-between">
+                    <label for = 'email'>Email</label>
+                    <input type="text" name="email" placeholder = "Enter your email..." 
+                        value = { email } onChange = { (e) => setEmail(e.target.value) }
                         className = "ms-5 border-2 border-stone-600 px-2 py-1 rounded-md" 
                     />
                 </div>

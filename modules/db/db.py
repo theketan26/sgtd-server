@@ -48,7 +48,7 @@ class Db:
             crypto_key = json.load(file)['crypto_key']
 
         fernet = Fernet(crypto_key)
-        user_data['password'] = fernet.encrypt(user_data['password'])
+        user_data['password'] = fernet.encrypt(bytes(user_data['password'], 'utf-8'))
         result = self.creds_collection.insert_one(user_data)
 
         try:

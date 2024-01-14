@@ -1,11 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { Provider } from 'react-redux';
 import './index.css';
-import { login, logout } from './actions/actions';
-import store from './store';
 
 
 import Home from './home/Home';
@@ -14,15 +10,27 @@ import Register from './register/Register';
 
 
 const App = () => {
-    const isLoggedIn = useSelector((state) => state.isLoggedIn);
-	const dispatch = useDispatch();
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
+	const checkLogin = async () => {
+		let temp = localStorage.getItem('accessToken');
+		await setIsLoggedIn(typeof(temp) == 'string');
+	};
+
+
+	useEffect(() => {
+		checkLogin();
+	}, [isLoggedIn]);
 
 
 	return (
 			<Router>
 				<Routes>
 					{ isLoggedIn ? (
-							<></>
+							<>
+								<Route path="/protected" element = { { isLoggedIn } } />
+							</>
 						) : (
 							<>
 								<Route path="/login" element = { <Login /> } />
@@ -38,9 +46,7 @@ const App = () => {
 
 const root = createRoot(document.getElementById('root'));
 root.render(
-	<Provider store={store}>
-		<React.StrictMode>
-			<App />
-		</React.StrictMode>
-	</Provider>
+	<React.StrictMode>
+		<App />
+	</React.StrictMode>
 );

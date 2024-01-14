@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useState } from "react"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function() {
@@ -9,6 +10,7 @@ export default function() {
     const [cPassword, setCPassword] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const navigate = useNavigate();
 
 
     const checkNumber = () => {
@@ -90,7 +92,7 @@ export default function() {
             data = res.data;
         });
 
-        console.log(data);
+        navigate('/login');
     };
 
 

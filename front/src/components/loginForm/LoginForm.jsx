@@ -1,11 +1,13 @@
 import axios from "axios";
-import { useState } from "react"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function() {
     const [note, setNote] = useState('');
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
 
     const checkNumber = () => {
@@ -57,6 +59,7 @@ export default function() {
             localStorage.setItem('accessToken', data.access_token);
             localStorage.setItem('position', 0);
             setNote('');
+            navigate('/');
         } else {
             setNote(data.message);
         }

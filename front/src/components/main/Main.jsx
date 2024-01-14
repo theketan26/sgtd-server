@@ -32,7 +32,7 @@ export default function () {
 
 
     return (
-        <div className = 'mx-5 my-10 flex flex-col justify-center align-center'>
+        <div className = 'mt-28 mx-5 my-10 flex flex-col justify-center align-center'>
             <Calender changeDate = { setDate } />
             <DateDay date = { date } />
             <BookingData isLoading = { isLoading } data = { bookingData } />

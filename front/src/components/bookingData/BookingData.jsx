@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 
 export default function (props) {
     const [isBook, setIsBook] = useState(false);
     const [data, setData] = useState([]);
+    const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
 
     async function handleChange() {
@@ -46,10 +49,9 @@ export default function (props) {
                                                 </div>
                                                 <div>
                                                     <div>Host: { item.description.host_name }</div>
-                                                    <div>Number: { item.description.host_number }</div>
-                                                    <div>Email: { item.description.host_email }</div>
-                                                    <div>Address: { item.description.host_address }</div>
-                                                    <div>Address: { item.description.host_address }</div>
+                                                    { isLoggedIn ? <div>Number: { item.description.host_number }</div> : <div></div> }
+                                                    { isLoggedIn ? <div>Email: { item.description.host_email }</div> : <div></div> }
+                                                    { isLoggedIn ? <div>Address: { item.description.host_address }</div> : <div></div> }
                                                     <div>Booker: { item.description.booker_name }</div>
                                                     <div>Booker Number: { item.description.booker_number }</div>
                                                 </div>

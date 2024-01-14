@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { login, logout } from './reducers/index';
 
 
-import Header from './components/header/Header';
 import Home from './home/Home';
 import Login from './login/Login';
 import Register from './register/Register';

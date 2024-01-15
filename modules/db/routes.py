@@ -14,6 +14,11 @@ async def get_user(user: int):
     return report
 
 
+async def get_user_detail(user: int):
+    report = db.get_user(user, detail = True)
+    return report
+
+
 class UserDetails(BaseModel):
     number: int
     name: str

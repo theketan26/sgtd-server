@@ -24,7 +24,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
 
 
 async def login_for_access_token(form_data):
-    from modules.db.routes import get_user
+    from modules.db.routes import get_user, get_user_detail
     result = await get_user(int(form_data.username))
     if not result:
         return {
@@ -45,13 +45,18 @@ async def login_for_access_token(form_data):
             'status': False,
             'message': f'Incorrect password'
         }
+    
+    details_result = await get_user_detail(int(form_data.username))
+    details_result.pop('_id')
 
     access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data = {"sub": form_data.username},
                                        expires_delta = access_token_expires)
+
     return {
         'status': True,
         "access_token": access_token,
+        "data": details_result,
         "token_type": "bearer"
     }
 

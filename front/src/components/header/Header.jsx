@@ -15,14 +15,13 @@ export default function Header() {
 
     useEffect(() => {
         setData(JSON.parse(localStorage.getItem('userData')));
-        console.log(data);
     }, []);
 
 
     return (
         <div>
             <div className="absolute top-0 left-0 w-screen bg-orange-300 px-10 py-5 text-xl font-medium flex justify-between">
-                <span>Shree Guru Tekchand Dharamshala</span>
+                <span className = "me-4">Shree Guru Tekchand Dharamshala</span>
                 <div className = "cursor-pointer"
                     onMouseOver = { () => setLoginOver(true) }
                     onMouseOut = { () => setLoginOver(false) }

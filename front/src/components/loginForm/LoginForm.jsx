@@ -97,9 +97,6 @@ export default function() {
                 <div className = "mt-5 text-center text-rose-700">
                     { note }
                 </div>
-                <div className = "mt-5 text-center">
-                    Don't have accout click here!
-                </div>
             </form>
         </div>
     )

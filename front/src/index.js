@@ -39,12 +39,11 @@ const App = () => {
 				<Routes>
 					{ isLoggedIn ? (
 							<>
-								<Route path="/protected" element = { <h1>Hello world</h1> } />
+								<Route path="/register" element = { <Register /> } />
 							</>
 						) : (
 							<>
 								<Route path="/login" element = { <Login /> } />
-								<Route path="/register" element = { <Register /> } />
 							</>
 					)}
 					<Route path="/" element = { <Home /> } />

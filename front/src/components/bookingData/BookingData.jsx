@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 export default function (props) {
@@ -62,7 +63,7 @@ export default function (props) {
                             }
                         </div>
                         :
-                        <div className = "bg-green-300">
+                        <div className = "bg-green-300 px-4 py-2 rounded">
                             No Bookings
                         </div>
                     }

@@ -32,7 +32,6 @@ export default function () {
         });
 
         setIsLoading(false);
-        console.log(position);
     }
 
 

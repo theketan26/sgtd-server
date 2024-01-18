@@ -46,7 +46,7 @@ export default function (props) {
                                         <div key = { index } className = "mt-5">
                                             <div className = "text-center font-medium">
                                                 <div className = "">
-                                                    { item.summary }
+                                                    { item.summary.toUpperCase() }
                                                 </div>
                                                 <div>
                                                     <div>Host: { item.description.host_name }</div>

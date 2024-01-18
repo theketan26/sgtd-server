@@ -68,12 +68,29 @@ export default function() {
         var result = null;
         const uri = `https://sgtd.onrender.com/add-event/${date}`;
         const token = localStorage.getItem('accessToken');
+        const data = JSON.parse(localStorage.getItem('userData'));
+        const reqData = {
+            'summary': summary,
+            'description': {
+                'host_name': hostName,
+                'host_number': hostNumber,
+                'host_email': hostEmail,
+                'host_address': hostAddress,
+                'booker_name': data['name'],
+                'booker_number': data['number'],
+                'dates': [date],
+                'days': 1
+            },
+            'location': ''
+        };
         await axios({
             method: 'post',
             url: uri,
-            'accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Bearer ${token}`,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             data: {
                 'summary': summary,
                 'description': {
@@ -81,18 +98,23 @@ export default function() {
                     'host_number': hostNumber,
                     'host_email': hostEmail,
                     'host_address': hostAddress,
-                    'booker_name': '',
-                    'booker_number': 0,
+                    'booker_name': data['name'],
+                    'booker_number': data['number'],
                     'dates': [date],
                     'days': 1
                 },
                 'location': ''
             }
         }).then(async (res) => {
-            result = res;
+            result = res.data;
         });
 
-        console.log(result);
+        if (result['status']) {
+            alert(`${summary.toLocaleUpperCase()} booking added successfully!`);
+            navigate('/');
+        } else {
+            alert(`${summary.toLocaleUpperCase()} booking failed!`);
+        }
     };
 
 

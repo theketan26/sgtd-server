@@ -43,6 +43,7 @@ export default function () {
 
     const handleDelete = async (e, summ) => {
         e.preventDefault();
+        setIsLoading(true);
 
         var result = null;
         const temp_date = `${date.getFullYear()}-${(date.getMonth() + 1) >= 10 ? `${date.getMonth() + 1}` : `0${date.getMonth() + 1}`}-${date.getDate()}`;
@@ -65,6 +66,7 @@ export default function () {
         } else {
             alert(`Booking deleting failed!`);
         }
+        setIsLoading(false);
         window.location.reload(false);
     }
 

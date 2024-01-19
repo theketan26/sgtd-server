@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 
 
 export default function() {
     const [note, setNote] = useState('');
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
 
@@ -32,10 +34,13 @@ export default function() {
 
 
     const handleSubmit = async (e) => {
-        setNote('Loading');
+        setIsLoading(true);
 
         e.preventDefault();
-        if (!(checkNumber() && checkPassword())) return
+        if (!(checkNumber() && checkPassword())) {
+            setIsLoading(false);
+            return;
+        }
 
         let uri = `https://sgtd.onrender.com/login`;
         // let uri = `http://127.0.0.1:8000/login`;
@@ -64,6 +69,8 @@ export default function() {
         } else {
             setNote(data.message);
         }
+
+        setIsLoading(false);
     };
 
 
@@ -91,7 +98,12 @@ export default function() {
                     <button onClick = { handleSubmit }
                         className = "px-5 py-2 font-bold rounded-md bg-stone-300 self-center"
                     >
-                        Login
+                        {
+                            isLoading ?
+                                <BounceLoader size = { 21 } color = "orange" />
+                            :   
+                                "Login"
+                        }
                     </button>
                 </div>
                 <div className = "mt-5 text-center text-rose-700">

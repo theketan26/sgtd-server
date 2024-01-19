@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 
 
 export default function() {
@@ -10,6 +11,7 @@ export default function() {
     const [cPassword, setCPassword] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
 
@@ -49,10 +51,15 @@ export default function() {
 
 
     const handleSubmit = async (e) => {
-        setNote('Loading');
+        setIsLoading(true);
 
         e.preventDefault();
-        if (!(checkNumber() && checkPassword() && checkName())) return
+        if (!(checkNumber() && checkPassword() && checkName())) {
+            setIsLoading(false);
+            return;
+        }
+
+        setNote('');
 
         let uri = `https://sgtd.onrender.com/add-user`;
 
@@ -91,6 +98,19 @@ export default function() {
         }).then(async (res) => {
             data = res.data;
         });
+
+        if (data.status) {
+            setNote('Added');
+            setNumber('');
+            setPassword('');
+            setCPassword('');
+            setName('');
+            setEmail('');
+        } else {
+            setNote(data.message);
+        }
+
+        setIsLoading(false);
     };
 
 
@@ -139,14 +159,16 @@ export default function() {
                     <button onClick = { handleSubmit }
                         className = "px-5 py-2 font-bold rounded-md bg-stone-300 self-center"
                     >
-                        Register
+                        {
+                            isLoading?
+                                <BounceLoader size = { 21 } color = "orange" />
+                                :   
+                                "Register"
+                        }
                     </button>
                 </div>
                 <div className = "mt-5 text-center text-rose-700">
                     { note }
-                </div>
-                <div className = "mt-5 text-center">
-                    Already have account click here!
                 </div>
             </form>
         </div>

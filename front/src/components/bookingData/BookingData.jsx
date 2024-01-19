@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 
 
 export default function (props) {
@@ -48,7 +49,7 @@ export default function (props) {
         <div className = "self-center mt-5 p-5 text-xl font-bold">
             { props.isLoading ? 
                 <div>
-                    Loading
+                    <BounceLoader size = { 40 } color = "orange" />
                 </div>
                 :
                 <div>

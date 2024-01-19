@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 
 
 export default function() {
@@ -13,6 +14,7 @@ export default function() {
     const [hostEmail, setHostEmail] = useState('');
     const [hostAddress, setHostAddress] = useState('');
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const checkDate = () => {
@@ -58,8 +60,11 @@ export default function() {
 
 
     const handleSubmit = async (e) => {
+        setIsLoading(true);
+
         e.preventDefault();
         if (!(checkDate() && checkHostName() && checkHostNumber() && checkHostAddress())) {
+            setIsLoading(false);
             return;
         }
 
@@ -98,10 +103,11 @@ export default function() {
 
         if (result['status']) {
             alert(`${summary.toLocaleUpperCase()} booking added successfully!`);
-            navigate('/');
         } else {
             alert(`${summary.toLocaleUpperCase()} booking failed!`);
         }
+
+        setIsLoading(false);
     };
 
 
@@ -173,7 +179,12 @@ export default function() {
                     <button onClick = { handleSubmit }
                         className = "px-5 py-2 font-bold rounded-md bg-stone-300 self-center"
                     >
-                        Book
+                        {
+                            isLoading? 
+                                <BounceLoader size = { 21 } color = "orange" />
+                                : 
+                                'Book'
+                        }
                     </button>
                 </div>
 

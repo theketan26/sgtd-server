@@ -5,7 +5,7 @@ import { BounceLoader } from "react-spinners";
 
 
 export default function() {
-    const summaries = ['marriage', 'birthday', 'surajpuja', 'uthawna'];
+    const summaries = ['marriage', 'birthday', 'surajpuja', 'uthawna', 'pagdi', 'other'];
     const [note, setNote] = useState('');
     const [date, setDate] = useState(new Date());
     const [summary, setSummary] = useState('marrige');

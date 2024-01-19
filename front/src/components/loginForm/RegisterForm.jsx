@@ -91,8 +91,6 @@ export default function() {
         }).then(async (res) => {
             data = res.data;
         });
-
-        navigate('/login');
     };
 
 

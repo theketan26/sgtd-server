@@ -53,7 +53,10 @@ const App = () => {
 				<Routes>
 					{ isLoggedIn ? (
 							<>
-								<Route path = "/register" element = { <Register /> } />
+								{
+									(position === 1) &&
+										<Route path = "/register" element = { <Register /> } />
+								}
 								<Route path = "/book" element = { <Book /> } />
 							</> 
 						) : (

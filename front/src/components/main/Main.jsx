@@ -38,12 +38,40 @@ export default function () {
     const handleBook = (e) => {
         e.preventDefault();
         navigate(`/book`);
+    };
+
+
+    const handleDelete = async (e, summ) => {
+        e.preventDefault();
+
+        var result = null;
+        const temp_date = `${date.getFullYear()}-${(date.getMonth() + 1) >= 10 ? `${date.getMonth() + 1}` : `0${date.getMonth() + 1}`}-${date.getDate()}`;
+        const uri = `https://sgtd.onrender.com/delete-event/${temp_date}/${summ}`;
+        const token = localStorage.getItem('accessToken');
+        await axios({
+            method: 'delete',
+            url: uri,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(async (res) => {
+            result = res.data;
+        });
+
+        if (result['status']) {
+            alert(`Booking deleted successfully!`);
+        } else {
+            alert(`Booking deleting failed!`);
+        }
+        navigate('/');
     }
 
 
     useEffect(() => {
         handleChange();
-    }, [date, position]);
+    }, [date]);
 
 
     return (
@@ -60,6 +88,7 @@ export default function () {
             <BookingData 
                 isLoading = { isLoading } 
                 data = { bookingData } 
+                handleDelete = { handleDelete }
             />
         </div>
     )

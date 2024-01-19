@@ -65,7 +65,7 @@ export default function () {
         } else {
             alert(`Booking deleting failed!`);
         }
-        navigate('/');
+        window.location.reload(false);
     }
 
 

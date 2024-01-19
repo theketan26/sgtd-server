@@ -91,20 +91,7 @@ export default function() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            data: {
-                'summary': summary,
-                'description': {
-                    'host_name': hostName,
-                    'host_number': hostNumber,
-                    'host_email': hostEmail,
-                    'host_address': hostAddress,
-                    'booker_name': data['name'],
-                    'booker_number': data['number'],
-                    'dates': [date],
-                    'days': 1
-                },
-                'location': ''
-            }
+            data: reqData
         }).then(async (res) => {
             result = res.data;
         });

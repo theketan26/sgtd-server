@@ -1,3 +1,4 @@
+import os
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -5,21 +6,26 @@ from datetime import datetime, timedelta
 from typing import Optional
 import json
 from cryptography.fernet import Fernet
+from dotenv import load_dotenv
 
 
-with open('consts.json', 'r') as file:
-    secret = json.load(file)
-    SECRET_KEY = secret['secret_key']
-    ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = 100000
+load_dotenv()
+
+
+ALGORITHM = "HS256"
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+CRYPTO_KEY = os.getenv('CRYPTO_KEY')
+ACCESS_TOKEN_EXPIRE_MINUTES = 100000
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
+
 
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     expire = datetime.now() + expires_delta
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, ENCRYPTION_KEY, algorithm = ALGORITHM)
     return encoded_jwt
 
 
@@ -68,7 +74,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         headers = {"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
+        payload = jwt.decode(token, ENCRYPTION_KEY, algorithms = [ALGORITHM])
         return payload
     except JWTError:
         raise credentials_exception

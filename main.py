@@ -11,8 +11,8 @@ from modules.db.routes import db_router
 from modules.auth.auth import login_for_access_token
 
 
-# app = FastAPI()
-app = FastAPI(docs_path = None)
+app = FastAPI()
+# app = FastAPI(docs_path = None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins = ['*'],
@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 app.include_router(db_router)
-app.include_router(event_router)
+# app.include_router(event_router)
 
 
 @app.post("/login")

@@ -1,16 +1,22 @@
+import os
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 from cryptography.fernet import Fernet
 import json
+from dotenv import load_dotenv
+import re
 
 
-uri = "mongodb+srv://theketan26:ks123456@start.fbvwsga.mongodb.net/?retryWrites=true&w=majority"
+load_dotenv()
+
+
+URI = os.getenv('MONGO_URI')
 
 
 class Db:
     def __init__(self):
-        self.client = MongoClient(uri, server_api = ServerApi('1'))
+        self.client = MongoClient(URI, server_api = ServerApi('1'))
 
         try:
             print("Starting to ping!")
@@ -20,6 +26,7 @@ class Db:
             print(e)
 
         self.db = self.client.user
+        self.event = self.client.event
         self.details_collection = self.db.details
         self.creds_collection = self.db.credentials
 
@@ -158,4 +165,165 @@ class Db:
 
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+            return False
+
+
+    def get_event_on_date(self, date):
+        y, m, d  = date.split('-')
+        try:
+            # result = eval(f'self.db._{y}.find_one({{"date": f"{m}-{d}"}})')
+            s = f'{m}'
+            st = f'{m}-{d}'
+            sti = ''
+            # result = st
+            result = self.event.get_collection(y).find_one({"date": st})
+            # result = self.event.get_collection(y).find({"date": {"$regex": st}})
+            result.pop('_id')
+
+            events = result['event_id']
+            result = []
+
+            for event in events:
+                res = self.event.get_collection(f"{y}_data").find_one({"event_id": event})
+                res.pop('_id')
+                res = {
+                    'event_id': res['event_id'],
+                    'title': res['desc']['title'],
+                    'host': res['desc']['host']['name'],
+                    'booker_name': res['desc']['booker']['name'],
+                    'booker_number': res['desc']['booker']['number'],
+                    'confirm': res['payment']['total'] == res['payment']['deposit']
+                }
+                result.append(res)
+
+            return {
+                "status": True,
+                "data": result,
+            }
+
+        except Exception as e:
+            # print(f"An unexpected error occurred: {e}")
+            return {
+                "status": False,
+                "message": f"An unexpected error occurred: {e}"
+            }
+
+
+    def get_event_on_id(self, date, id):
+        y, m, d  = date.split('-')
+        try:
+            res = self.event.get_collection(f"{y}_data").find_one({"event_id": id})
+            res.pop('_id')
+
+            return {
+                "status": True,
+                "data": res,
+            }
+
+        except Exception as e:
+            # print(f"An unexpected error occurred: {e}")
+            return {
+                "status": False,
+                "message": f"An unexpected error occurred: {e}"
+            }
+
+
+    def get_event_on_month(self, date):
+        y, m = date.split("-")
+        try:
+            # result = eval(f'self.db._{y}.find_one({{"date": f"{m}-{d}"}})')
+            s = f'{m}'
+            result = self.event.get_collection(y).find({"date": {"$regex": s}})
+
+            result = [res for res in result]
+            for res in result:
+                res.pop('_id')
+
+            return {
+                "status": True,
+                "data": result,
+            }
+
+        except Exception as e:
+            # print(f"An unexpected error occurred: {e}")
+            return {
+                "status": False,
+                "message": f"An unexpected error occurred: {e}"
+            }
+
+
+    def add_event(self, data):
+        y, m, d = data.date.split('-')
+        new = False
+        
+        try:
+            res = self.event.get_collection(y).find_one({'date': f"{m}-{d}"})
+            try:
+                event = res['event_id']
+            except:
+                new = True
+                res = {
+                    'date': f"{m}-{d}",
+                    'event_id': []
+                }
+                event = res['event_id']
+            
+            new_event = ''.join([y, m, d, str(len(event))])
+            event.extend([new_event])
+
+            def object_to_dict(obj):
+                if hasattr(obj, '__dict__'):
+                    return {key: object_to_dict(value) for key, value in obj.__dict__.items()}
+                elif isinstance(obj, list):
+                    return [object_to_dict(item) for item in obj]
+                else:
+                    return obj
+            
+            data = object_to_dict(data)
+            data.update({
+                'event_id': new_event
+            })
+
+            if new:
+                self.event.get_collection(y).insert_one(res)
+            else:
+                self.event.get_collection(y).update_one({'date': f"{m}-{d}"}, {"$set": res})
+
+            self.event.get_collection(f'{y}_data').insert_one(data)
+                
+            return True
+
+        except Exception as e:
+            print(e)
+            return False
+        
+
+    def delete_event(self, data):
+        y = data['date'].split('-')[0]
+        try:
+            self.event.get_collection(y).delete_one(data)
+            return True
+        
+        except Exception as e:
+            return False
+
+
+    def update_event(self, data):
+        y, m, d = data.data.date.split('-')
+        try:
+            def object_to_dict(obj):
+                if hasattr(obj, '__dict__'):
+                    return {key: object_to_dict(value) for key, value in obj.__dict__.items()}
+                elif isinstance(obj, list):
+                    return [object_to_dict(item) for item in obj]
+                else:
+                    return obj
+                
+            res = object_to_dict(data.data)
+            res.update({'event_id': data.event_id})
+            self.event.get_collection(f"{y}_data").update_one({'event_id': data.event_id}, {"$set": res})
+            return True
+        
+        except Exception as e:
+            print(e)
             return False

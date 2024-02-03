@@ -38,10 +38,7 @@ async def login_for_access_token(form_data):
             'message': 'Incorrect username'
         }
 
-    with open('consts.json', 'r') as file:
-        crypto_key = json.load(file)['crypto_key']
-
-    fernet = Fernet(crypto_key)
+    fernet = Fernet(CRYPTO_KEY)
 
     result['_id'] = str(result['_id'])
     result['password'] = fernet.decrypt(result['password'])

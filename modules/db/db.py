@@ -178,6 +178,12 @@ class Db:
             # result = st
             result = self.event.get_collection(y).find_one({"date": st})
             # result = self.event.get_collection(y).find({"date": {"$regex": st}})
+            if result == None:
+                return {
+                    "status": False,
+                    "message": f"No event found on {st}"
+                }
+
             result.pop('_id')
 
             events = result['event_id']
@@ -191,8 +197,7 @@ class Db:
                     'title': res['desc']['title'],
                     'host': res['desc']['host']['name'],
                     'booker_name': res['desc']['booker']['name'],
-                    'booker_number': res['desc']['booker']['number'],
-                    'confirm': res['payment']['total'] == res['payment']['deposit']
+                    'booker_number': res['desc']['booker']['number']
                 }
                 result.append(res)
 
@@ -202,7 +207,6 @@ class Db:
             }
 
         except Exception as e:
-            # print(f"An unexpected error occurred: {e}")
             return {
                 "status": False,
                 "message": f"An unexpected error occurred: {e}"
@@ -299,9 +303,16 @@ class Db:
         
 
     def delete_event(self, data):
-        y = data['date'].split('-')[0]
+        y, m, d = data['date'].split('-')
         try:
-            self.event.get_collection(y).delete_one(data)
+            self.event.get_collection(y).delete_one({
+                'date': f"{m}-{d}",
+                'event_id': data['event_id']
+            })
+            self.event.get_collection(f'{y}_data').delete_one({
+                'date': f"{y}-{m}-{d}",
+                'event_id': data['event_id']
+            })
             return True
         
         except Exception as e:

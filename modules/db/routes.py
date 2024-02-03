@@ -59,7 +59,7 @@ async def update_user(data: UserCreds, current_user: dict = Depends(get_current_
 
 
 @db_router.get('/get-event-date/{date}')
-async def get_event_date(date: str, current_user: dict = Depends(get_current_user)):
+async def get_event_date(date: str):
     report = db.get_event_on_date(date)
     return report
 
@@ -71,7 +71,7 @@ async def get_event_date(date: str, id: str, current_user: dict = Depends(get_cu
 
 
 @db_router.get('/get-event-month/{date}')
-async def get_event_date(date: str, current_user: dict = Depends(get_current_user)):
+async def get_event_date(date: str):
     report = db.get_event_on_month(date)
     return report
 
@@ -94,7 +94,6 @@ class EventBooker(BaseModel):
     name: str
     number: int
 class EventPayment(BaseModel):
-    total: int
     deposit: int
     mode: str
     date: str
@@ -108,6 +107,7 @@ class EventData(BaseModel):
     days: int
     desc: EventDesc
     payment: EventPayment
+    extra: str
 
 
 @db_router.post('/add-event')

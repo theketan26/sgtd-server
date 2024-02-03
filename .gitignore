@@ -1,8 +1,4 @@
-modules/event
 front/node_modules
-consts.json
-creds.json
-token.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

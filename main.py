@@ -6,7 +6,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from modules.event.routes import event_router
 from modules.db.routes import db_router
 from modules.auth.auth import login_for_access_token
 

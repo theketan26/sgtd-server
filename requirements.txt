@@ -6,4 +6,5 @@ pymongo
 python-dotenv
 python_jose
 uvicorn
+python-multipart
 

@@ -12,6 +12,7 @@ load_dotenv()
 
 
 URI = os.getenv('MONGO_URI')
+CRYPTO_KEY = os.getenv("CRYPTO_KEY")
 
 
 class Db:
@@ -51,10 +52,7 @@ class Db:
             report['message'] = 'User already exist'
             return report
 
-        with open('consts.json', 'r') as file:
-            crypto_key = json.load(file)['crypto_key']
-
-        fernet = Fernet(crypto_key)
+        fernet = Fernet(CRYPTO_KEY)
         user_data['password'] = fernet.encrypt(bytes(user_data['password'], 'utf-8'))
         result = self.creds_collection.insert_one(user_data)
 
